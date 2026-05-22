@@ -409,5 +409,28 @@
             setTimeout(() => t.classList.remove('show'), 2500);
         });
     </script>
+    <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            height: '1', width: '1', videoId: 'HY5GNmgJJDE',
+            playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'HY5GNmgJJDE', 'controls': 0 },
+            events: { 'onReady': () => {
+                const startAudio = () => { player.playVideo(); };
+                document.addEventListener('click', startAudio, { once: true });
+                document.addEventListener('touchstart', startAudio, { once: true });
+                
+                // زر الكتم السفلي
+                document.getElementById('sndBtn')?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (player.isMuted()) { player.unMute(); e.target.textContent = '🔊'; }
+                    else { player.mute(); e.target.textContent = '🔇'; }
+                });
+            }}
+        });
+    }
+</script>
 </body>
 </html>
