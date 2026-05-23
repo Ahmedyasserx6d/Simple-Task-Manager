@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -333,10 +332,6 @@
             const r = noBtn.getBoundingClientRect();
             const gRect = btnGroup.getBoundingClientRect();
 
-            // حساب المسافة بين الماوس والزر
-            const dist = Math.hypot(mx - (r.left + r.width/2), my - (r.top + r.height/2));
-            if (dist > 100) return; // يهرب إذا اقترب جداً فقط
-
             const now = Date.now();
             if (now - lastEscapeTime > 400) {
                 escapeCount++;
@@ -358,9 +353,15 @@
             noBtn.style.top = randomY + 'px';
         }
 
-        document.addEventListener('mousemove', e => escapeFrom(e.clientX, e.clientY));
-        document.addEventListener('touchmove', e => { const t = e.touches[0]; escapeFrom(t.clientX, t.clientY); }, { passive: true });
-        noBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
+        // الأحداث الجديدة: الهروب للكمبيوتر والموبايل (اللمس والضغط المباشر)
+        document.addEventListener('mousemove', e => {
+            const r = noBtn.getBoundingClientRect();
+            const dist = Math.hypot(e.clientX - (r.left + r.width/2), e.clientY - (r.top + r.height/2));
+            if (dist < 100) escapeFrom(e.clientX, e.clientY);
+        });
+        
+        noBtn.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; escapeFrom(t.clientX, t.clientY); }, { passive: false });
+        noBtn.addEventListener('click', e => { e.preventDefault(); const r = noBtn.getBoundingClientRect(); escapeFrom(r.left + r.width/2, r.top + r.height/2); });
 
         // تفعيل كارت النجاح عند الموافقة
         yesBtn.addEventListener('click', () => {
@@ -426,6 +427,7 @@
             width: '1',
             videoId: 'HY5GNmgJJDE', // معرف الأغنية الخاصة بك
             playerVars: {
+                'start': 94, // تبدأ من الدقيقة 1:34 بالظبط 🚀
                 'autoplay': 1,
                 'loop': 1,
                 'playlist': 'HY5GNmgJJDE',
@@ -442,11 +444,11 @@
     function onPlayerReady(event) {
         // تشغيل الموسيقى فور قيام المستخدم بأي تفاعل (لمس أو ضغط) لكسر حماية المتصفح
         document.addEventListener('click', () => {
-            player.playVideo();
+            if(player && player.playVideo) player.playVideo();
         }, { once: true });
         
         document.addEventListener('touchstart', () => {
-            player.playVideo();
+            if(player && player.playVideo) player.playVideo();
         }, { once: true });
 
         // ربط زر الصوت السفلي بكتم/تشغيل الأغنية
