@@ -277,6 +277,14 @@
        <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+       <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
+    <script>
+        // تحميل مكتبة يوتيوب أولاً بشكل آمن
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const mainCard = document.getElementById('mainCard');
@@ -320,7 +328,7 @@
             }, 2800);
         }
 
-        // دالة الهروب الذكية للموبايل والكمبيوتر
+        // دالة الهروب للموبايل والكمبيوتر
         function doEscape() {
             if (annoyed || noBtn.style.display === 'none') return;
             const r = noBtn.getBoundingClientRect();
@@ -352,11 +360,11 @@
             if (dist < 100) doEscape();
         });
 
-        // موبايل (اللمس والضغط المباشر)
+        // موبايل اللمس والضغط
         noBtn.addEventListener('touchstart', e => { e.preventDefault(); doEscape(); }, { passive: false });
         noBtn.addEventListener('click', e => { e.preventDefault(); doEscape(); });
 
-        // تشغيل كارت النجاح والقلوب
+        // كارت النجاح والقلوب
         yesBtn.addEventListener('click', () => {
             mainCard.style.display = 'none';
             successCard.style.display = 'flex';
@@ -393,7 +401,7 @@
             setInterval(tick, 1000);
         }
 
-        // تشغيل اليوتيوب من الدقيقة 1:34 تلقائياً عند أول تفاعل
+        // مشغل الأغنية التلقائي من الدقيقة 1:34
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('youtube-player', {
