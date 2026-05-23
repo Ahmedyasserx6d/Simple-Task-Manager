@@ -274,6 +274,9 @@
     <div id="hearts"></div>
 
     <script>
+       <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const mainCard = document.getElementById('mainCard');
@@ -301,55 +304,40 @@
             annoyed = true;
             const msg = ANNOY_MSGS[annoyIdx % ANNOY_MSGS.length];
             annoyIdx++;
-            
             annoyOv.innerHTML = `<div style="background:rgba(30,10,20,0.9); border:1px solid #ff5c8a; border-radius:24px; padding:30px; max-width:320px; color:#fff;">
                 <h3 style="color:#ff5c8a; margin-bottom:10px;">${msg.title}</h3>
                 <p style="white-space:pre-line; margin-bottom:15px;">${msg.body}</p>
                 <small style="color:rgba(255,255,255,0.4)">${msg.note}</small>
             </div>`;
-            
             annoyOv.style.display = 'flex';
-            if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
-            
             setTimeout(() => {
                 annoyOv.style.display = 'none';
                 annoyed = false;
                 escapeCount = 0;
-                resetNoBtn();
+                noBtn.style.position = 'relative';
+                noBtn.style.left = '0px';
+                noBtn.style.top = '0px';
             }, 2800);
         }
 
-        function resetNoBtn() {
-            noBtn.style.position = 'relative';
-            noBtn.style.left = '0px';
-            noBtn.style.top = '0px';
-        }
-
-        // دالة الهروب المصححة (تتحرك داخل حدود الكارت فقط لئلا يهرب لليسار)
-        function escapeFrom(mx, my) {
+        // دالة الهروب الذكية للموبايل والكمبيوتر
+        function doEscape() {
             if (annoyed || noBtn.style.display === 'none') return;
-
             const r = noBtn.getBoundingClientRect();
             const gRect = btnGroup.getBoundingClientRect();
 
-            // حساب المسافة بين الماوس والزر
-            const dist = Math.hypot(mx - (r.left + r.width/2), my - (r.top + r.height/2));
-            if (dist > 100) return; // يهرب إذا اقترب جداً فقط
-
+            escapeCount++;
             const now = Date.now();
             if (now - lastEscapeTime > 400) {
-                escapeCount++;
                 lastEscapeTime = now;
                 clearTimeout(annoyTimer);
                 annoyTimer = setTimeout(() => { escapeCount = 0; }, 3000);
                 if (escapeCount >= 3) { showAnnoyed(); return; }
             }
 
-            // توليد إحداثيات عشوائية آمنة داخل نطاق الأزرار فقط
             noBtn.style.position = 'absolute';
             const maxX = gRect.width - r.width;
-            const maxY = 80; // النطاق الرأسي المسموح للحركة
-
+            const maxY = 80;
             const randomX = Math.random() * maxX;
             const randomY = (Math.random() * maxY) - (maxY / 2);
 
@@ -357,11 +345,18 @@
             noBtn.style.top = randomY + 'px';
         }
 
-        document.addEventListener('mousemove', e => escapeFrom(e.clientX, e.clientY));
-        document.addEventListener('touchmove', e => { const t = e.touches[0]; escapeFrom(t.clientX, t.clientY); }, { passive: true });
-        noBtn.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); });
+        // كمبيوتر
+        document.addEventListener('mousemove', e => {
+            const r = noBtn.getBoundingClientRect();
+            const dist = Math.hypot(e.clientX - (r.left + r.width/2), e.clientY - (r.top + r.height/2));
+            if (dist < 100) doEscape();
+        });
 
-        // تفعيل كارت النجاح عند الموافقة
+        // موبايل (اللمس والضغط المباشر)
+        noBtn.addEventListener('touchstart', e => { e.preventDefault(); doEscape(); }, { passive: false });
+        noBtn.addEventListener('click', e => { e.preventDefault(); doEscape(); });
+
+        // تشغيل كارت النجاح والقلوب
         yesBtn.addEventListener('click', () => {
             mainCard.style.display = 'none';
             successCard.style.display = 'flex';
@@ -369,7 +364,6 @@
             startCountdown();
         });
 
-        // تأثير تساقط القلوب والورود الفاخرة
         const HI = ['💖', '🌹', '✨', '🌸', '💓'];
         function launchHearts(n) {
             const hEl = document.getElementById('hearts');
@@ -385,7 +379,6 @@
             }
         }
 
-        // نظام العداد التنازلي التلقائي (7 أيام من الآن)
         function startCountdown() {
             const tgt = Date.now() + 168 * 3600000;
             function tick() {
@@ -400,43 +393,32 @@
             setInterval(tick, 1000);
         }
 
-        // زر المشاركة
+        // تشغيل اليوتيوب من الدقيقة 1:34 تلقائياً عند أول تفاعل
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1', width: '1', videoId: 'HY5GNmgJJDE',
+                playerVars: { 'autoplay': 1, 'loop': 1, 'playlist': 'HY5GNmgJJDE', 'controls': 0, 'start': 94 },
+                events: { 'onReady': () => {
+                    const startAudio = () => { player.playVideo(); };
+                    document.addEventListener('click', startAudio, { once: true });
+                    document.addEventListener('touchstart', startAudio, { once: true });
+                    
+                    document.getElementById('sndBtn')?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (player.isMuted()) { player.unMute(); e.target.textContent = '🔊'; }
+                        else { player.mute(); e.target.textContent = '🔇'; }
+                    });
+                }}
+            });
+        }
+
         document.getElementById('shareBtn').addEventListener('click', () => {
-            const url = window.location.href;
-            navigator.clipboard.writeText(url);
+            navigator.clipboard.writeText(window.location.href);
             const t = document.getElementById('toast');
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2500);
         });
     </script>
-   <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
-<script src="https://www.youtube.com/iframe_api"></script>
-<script>
-    var player;
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('youtube-player', {
-            height: '1', width: '1', videoId: 'HY5GNmgJJDE',
-            playerVars: { 
-                'autoplay': 1, 
-                'loop': 1, 
-                'playlist': 'HY5GNmgJJDE', 
-                'controls': 0,
-                'start': 94 // هنا هيبدأ من الدقيقة 1:34 بالظبط 🚀
-            },
-            events: { 'onReady': () => {
-                const startAudio = () => { player.playVideo(); };
-                document.addEventListener('click', startAudio, { once: true });
-                document.addEventListener('touchstart', startAudio, { once: true });
-                
-                // زر الكتم السفلي
-                document.getElementById('sndBtn')?.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (player.isMuted()) { player.unMute(); e.target.textContent = '🔊'; }
-                    else { player.mute(); e.target.textContent = '🔇'; }
-                });
-            }}
-        });
-    }
-</script>
 </body>
 </html>
