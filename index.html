@@ -1,0 +1,473 @@
+                        <!DOCTYPE html>
+                        <html lang="ar" dir="rtl">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>طب اى ؟ 🌹</title>
+                            <style>
+                                /* ==========================================================================
+                                   1. الألوان الفاخرة وتنسيق الخلفية
+                                   ========================================================================== */
+                                @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@500;700;900&display=swap');
+                        
+                                * {
+                                    box-sizing: border-box;
+                                    margin: 0;
+                                    padding: 0;
+                                    user-select: none;
+                                    -webkit-user-select: none;
+                                }
+                        
+                                body {
+                                    background: radial-gradient(circle at center, #1a0b16 0%, #0a0308 100%);
+                                    color: #f5eff3;
+                                    font-family: 'Cairo', 'Tajawal', sans-serif;
+                                    min-height: 100vh;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    overflow: hidden;
+                                    position: relative;
+                                }
+                        
+                                /* قفل المحتوى في السنتر تماماً ومنع أي ترحيل */
+                                .wrapper {
+                                    position: relative;
+                                    width: 100%;
+                                    max-width: 410px;
+                                    padding: 20px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    z-index: 10;
+                                }
+                        
+                                /* ==========================================================================
+                                   2. كروت الواجهة (Glassmorphism)
+                                   ========================================================================== */
+                                .card-container {
+                                    background: rgba(18, 10, 16, 0.8);
+                                    backdrop-filter: blur(25px);
+                                    -webkit-backdrop-filter: blur(25px);
+                                    border: 1px solid rgba(255, 114, 159, 0.15);
+                                    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), 
+                                                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+                                    border-radius: 30px;
+                                    padding: 40px 28px;
+                                    width: 100%;
+                                    text-align: center;
+                                    box-sizing: border-box;
+                                }
+                        
+                                #successCard {
+                                    display: none; 
+                                    flex-direction: column;
+                                    align-items: center;
+                                    justify-content: center;
+                                    border: 1px solid rgba(212, 163, 89, 0.25);
+                                    background: linear-gradient(145deg, rgba(24, 12, 21, 0.85), rgba(13, 6, 11, 0.95));
+                                }
+                        
+                                /* النصوص */
+                                .type-wrap, h2 {
+                                    font-size: 22px;
+                                    font-weight: 800;
+                                color: #ffffff;
+                                margin-bottom: 16px;
+                                line-height: 1.6;
+                                text-shadow: 0 0 15px rgba(255, 114, 159, 0.25);
+                        }
+            
+                    .sub-text, p {
+                        font-size: 14.5px;
+                        color: #d1bda7;
+                    margin-bottom: 28px;
+                    line-height: 1.7;
+                }
+        
+                /* ==========================================================================
+                   3. منطقة الأزرار لضمان دقة الهروب
+                   ========================================================================== */
+                .btn-group {
+                    position: relative;
+                    display: flex;
+                gap: 14px;
+                justify-content: center;
+                align-items: center;
+                min-height: 65px;
+                margin-top: 10px;
+                width: 100%;
+            }
+
+        .btn {
+            font-family: 'Cairo', sans-serif;
+            font-size: 15.5px;
+            font-weight: 700;
+            padding: 13px 30px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s, box-shadow 0.3s;
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff5c8a 0%, #b0093d 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 25px rgba(176, 9, 61, 0.45);
+            flex: 1.4;
+            z-index: 11;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.04) translateY(-2px);
+            box-shadow: 0 12px 30px rgba(176, 9, 61, 0.6);
+        }
+
+        #noBtn {
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(209, 189, 167, 0.6);
+            border: 1px solid rgba(255, 114, 159, 0.12);
+            flex: 1;
+            z-index: 12;
+            transition: none; /* يتم تحريكه عبر الـ JS بدون لاج */
+        }
+
+        /* ==========================================================================
+           4. العداد التنازلي الأفقي (Cinema Style)
+           ========================================================================== */
+        .countdown-container {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            margin: 25px 0 !important;
+            width: 100% !important;
+            direction: ltr !important; 
+        }
+
+        .cd-box {
+            background: rgba(8, 3, 6, 0.55);
+            border: 1px solid rgba(212, 163, 89, 0.15);
+            padding: 12px 4px;
+            border-radius: 14px;
+            flex: 1;
+            min-width: 65px;
+            max-width: 75px;
+            text-align: center;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+        }
+
+        .cd-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: #d4a359;
+            font-family: monospace;
+            text-shadow: 0 0 10px rgba(212, 163, 89, 0.2);
+        }
+
+        .cd-label {
+            font-size: 11px;
+            color: rgba(209, 189, 167, 0.5);
+            margin-top: 5px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 600;
+        }
+
+        /* الأزرار العائمة تحت */
+        .floating-actions {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .action-btn {
+            pointer-events: auto;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(18, 10, 16, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 114, 159, 0.15);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 17px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 92, 138, 0.15);
+            transform: scale(1.08);
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(176, 9, 61, 0.95);
+            border: 1px solid rgba(255, 114, 159, 0.3);
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 13.5px;
+            color: #fff;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        #toast.show { opacity: 1; visibility: visible; }
+
+        .hp {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            animation: fall linear forwards;
+            z-index: 5;
+        }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <div id="mainCard" class="card-container">
+            <div id="typewriter" class="type-wrap">لحظة مهمة ✨<br>تيجي ننزل Date؟ 🌹</div>
+            <p class="sub-text">بقالي شوية بفكر أقولك 😔 بس مكنتش عارف أقولها إزاي.. فعملتلك دي!</p>
+            
+            <div class="btn-group" id="btnGroup">
+                <button id="yesBtn" class="btn">موافقة ✨</button>
+                <button id="noBtn" class="btn">لا</button>
+            </div>
+        </div>
+
+        <div id="successCard" class="card-container">
+            <h2 id="s-title">كنت مستني اللحظة دي 💖</h2>
+            <p id="s-sub">الورد جاهز ومستنيكي 🌹 والأغاني على ذوقك 🎵</p>
+            
+            <div class="countdown-container">
+                <div class="cd-box"><div id="cdS" class="cd-num">00</div><div class="cd-label">ثانية</div></div>
+                <div class="cd-box"><div id="cdM" class="cd-num">00</div><div class="cd-label">دقيقة</div></div>
+                <div class="cd-box"><div id="cdH" class="cd-num">00</div><div class="cd-label">ساعة</div></div>
+                <div class="cd-box"><div id="cdD" class="cd-num">00</div><div class="cd-label">يوم</div></div>
+            </div>
+            <p style="font-size: 11px; color: rgba(209,189,167,0.4); margin: 0;">تذكرة موعد رسمية مصممة بحب 🎫</p>
+        </div>
+    </div>
+
+    <div class="floating-actions">
+        <button id="sndBtn" class="action-btn">🔊</button>
+        <button id="shareBtn" class="action-btn">🔗</button>
+    </div>
+
+    <div id="toast">📋 تم نسخ الرابط لمشاركته!</div>
+    <div id="hearts"></div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const mainCard = document.getElementById('mainCard');
+        const successCard = document.getElementById('successCard');
+        const btnGroup = document.getElementById('btnGroup');
+
+        let escapeCount = 0;
+        let lastEscapeTime = 0;
+        let annoyTimer = null;
+        let annoyed = false;
+
+        // نظام الزعل
+        const ANNOY_MSGS = [
+            { title: 'stop messing with me!!', body: 'والله العظيم لو قولتي لا تاني\nهروح أتجوز القطة بتاعتي 😤', note: 'وهي برضو مش عايزاك 🐱' },
+            { title: 'أنا زعلت منك!', body: 'متتكلميش معايا؟! 😡', note: 'قلبي مجروح دلوقتي 😭' },
+            { title: 'خلاص.. راحت عليكي!', body: 'انتي اخترتي تعذبي قلبي 😩', note: 'قلبي اتكسر فعلاً.. 💔' }
+        ];
+        let annoyIdx = 0;
+
+        const annoyOv = document.createElement('div');
+        annoyOv.style.cssText = 'position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(18,4,8,.9);backdrop-filter:blur(12px);padding:32px;text-align:center';
+        document.body.appendChild(annoyOv);
+
+        function showAnnoyed() {
+            annoyed = true;
+            const msg = ANNOY_MSGS[annoyIdx % ANNOY_MSGS.length];
+            annoyIdx++;
+            
+            annoyOv.innerHTML = `<div style="background:rgba(30,10,20,0.9); border:1px solid #ff5c8a; border-radius:24px; padding:30px; max-width:320px; color:#fff;">
+                <h3 style="color:#ff5c8a; margin-bottom:10px;">${msg.title}</h3>
+                <p style="white-space:pre-line; margin-bottom:15px;">${msg.body}</p>
+                <small style="color:rgba(255,255,255,0.4)">${msg.note}</small>
+            </div>`;
+            
+            annoyOv.style.display = 'flex';
+            if (navigator.vibrate) navigator.vibrate([60, 40, 120]);
+            
+            setTimeout(() => {
+                annoyOv.style.display = 'none';
+                annoyed = false;
+                escapeCount = 0;
+                resetNoBtn();
+            }, 2800);
+        }
+
+        function resetNoBtn() {
+            noBtn.style.position = 'relative';
+            noBtn.style.left = '0px';
+            noBtn.style.top = '0px';
+        }
+
+        // دالة الهروب المصححة (تتحرك داخل حدود الكارت فقط لئلا يهرب لليسار)
+        function escapeFrom(mx, my) {
+            if (annoyed || noBtn.style.display === 'none') return;
+
+            const r = noBtn.getBoundingClientRect();
+            const gRect = btnGroup.getBoundingClientRect();
+
+            const now = Date.now();
+            if (now - lastEscapeTime > 400) {
+                escapeCount++;
+                lastEscapeTime = now;
+                clearTimeout(annoyTimer);
+                annoyTimer = setTimeout(() => { escapeCount = 0; }, 3000);
+                if (escapeCount >= 3) { showAnnoyed(); return; }
+            }
+
+            // توليد إحداثيات عشوائية آمنة داخل نطاق الأزرار فقط
+            noBtn.style.position = 'absolute';
+            const maxX = gRect.width - r.width;
+            const maxY = 80; // النطاق الرأسي المسموح للحركة
+
+            const randomX = Math.random() * maxX;
+            const randomY = (Math.random() * maxY) - (maxY / 2);
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        // الأحداث الجديدة: الهروب للكمبيوتر والموبايل (اللمس والضغط المباشر)
+        document.addEventListener('mousemove', e => {
+            const r = noBtn.getBoundingClientRect();
+            const dist = Math.hypot(e.clientX - (r.left + r.width/2), e.clientY - (r.top + r.height/2));
+            if (dist < 100) escapeFrom(e.clientX, e.clientY);
+        });
+        
+        noBtn.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; escapeFrom(t.clientX, t.clientY); }, { passive: false });
+        noBtn.addEventListener('click', e => { e.preventDefault(); const r = noBtn.getBoundingClientRect(); escapeFrom(r.left + r.width/2, r.top + r.height/2); });
+
+        // تفعيل كارت النجاح عند الموافقة
+        yesBtn.addEventListener('click', () => {
+            mainCard.style.display = 'none';
+            successCard.style.display = 'flex';
+            launchHearts(80);
+            startCountdown();
+        });
+
+        // تأثير تساقط القلوب والورود الفاخرة
+        const HI = ['💖', '🌹', '✨', '🌸', '💓'];
+        function launchHearts(n) {
+            const hEl = document.getElementById('hearts');
+            for (let i = 0; i < n; i++) {
+                setTimeout(() => {
+                    const h = document.createElement('div');
+                    h.className = 'hp';
+                    h.textContent = HI[Math.floor(Math.random() * HI.length)];
+                    h.style.cssText = `left:${Math.random() * 100}vw; font-size:${16 + Math.random() * 30}px; animation-duration:${3 + Math.random() * 4}s`;
+                    hEl.appendChild(h);
+                    setTimeout(() => h.remove(), 7000);
+                }, i * 30);
+            }
+        }
+
+        // نظام العداد التنازلي التلقائي (7 أيام من الآن)
+        function startCountdown() {
+            const tgt = Date.now() + 168 * 3600000;
+            function tick() {
+                const diff = tgt - Date.now();
+                if (diff <= 0) return;
+                document.getElementById('cdD').textContent = String(Math.floor(diff / 86400000)).padStart(2,'0');
+                document.getElementById('cdH').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+                document.getElementById('cdM').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+                document.getElementById('cdS').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+            }
+            tick();
+            setInterval(tick, 1000);
+        }
+
+        // زر المشاركة
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url);
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        });
+    </script>
+    <div id="youtube-player" style="position:fixed; top:-9999px; left:-9999px;"></div>
+
+<script>
+    // تحميل مكتبة يوتيوب الرسمية
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtube-player', {
+            height: '1',
+            width: '1',
+            videoId: 'HY5GNmgJJDE', // معرف الأغنية الخاصة بك
+            playerVars: {
+                'start': 94, // تبدأ من الدقيقة 1:34 بالظبط 🚀
+                'autoplay': 1,
+                'loop': 1,
+                'playlist': 'HY5GNmgJJDE',
+                'controls': 0,
+                'showinfo': 0,
+                'rel': 0
+            },
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        // تشغيل الموسيقى فور قيام المستخدم بأي تفاعل (لمس أو ضغط) لكسر حماية المتصفح
+        document.addEventListener('click', () => {
+            if(player && player.playVideo) player.playVideo();
+        }, { once: true });
+        
+        document.addEventListener('touchstart', () => {
+            if(player && player.playVideo) player.playVideo();
+        }, { once: true });
+
+        // ربط زر الصوت السفلي بكتم/تشغيل الأغنية
+        const sndBtn = document.getElementById('sndBtn');
+        if(sndBtn) {
+            let isMuted = false;
+            sndBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (isMuted) {
+                    player.unMute();
+                    sndBtn.textContent = '🔊';
+                } else {
+                    player.mute();
+                    sndBtn.textContent = '🔇';
+                }
+                isMuted = !isMuted;
+            });
+        }
+    }
+</script>
+</body>
+</html>
